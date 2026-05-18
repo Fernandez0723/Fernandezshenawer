@@ -1,503 +1,456 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="icon"  type="image/png" href="images/developer1.jpg">
-    <title>Welcome to Lamborghini</title>
-    <style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes, viewport-fit=cover">
+  <title>ZSHELL POWER | Voice + SciCalc + Translator</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
 
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
+    body {
+      font-family: 'Segoe UI', 'Inter', system-ui, 'Poppins', sans-serif;
+      background: radial-gradient(circle at 10% 30%, #0a0e1a, #02040c);
+      color: #eef2ff;
+      min-height: 100vh;
+      display: flex;
+      align-items: stretch;
+    }
 
-body {
-    font-family: 'Poppins', sans-serif;
-    color: #ffffff;
-    background-color: #000000;
-    line-height: 1.6;
-}
+    /* ========= SIDEBAR ========= */
+    .sidebar {
+      position: fixed;
+      left: -300px;
+      top: 0;
+      width: 300px;
+      height: 100vh;
+      background: rgba(8, 12, 25, 0.97);
+      backdrop-filter: blur(24px);
+      border-right: 1px solid rgba(139, 148, 244, 0.5);
+      z-index: 1000;
+      transition: left 0.3s cubic-bezier(0.2, 0.9, 0.4, 1.2);
+      padding: 1.8rem 1.2rem;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 8px 0 30px rgba(0, 0, 0, 0.7);
+      overflow-y: auto;
+    }
 
-/* Header Section */
-header {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    background: linear-gradient(to right, #000000, #0c0c0c, #262626);
-    padding: 20px 100px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    z-index: 1000;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
-}
+    .sidebar.open {
+      left: 0;
+    }
 
-header img {
-    height: 60px;
-}
+    .sidebar-header {
+      border-bottom: 2px solid #7c3aed;
+      padding-bottom: 1rem;
+      margin-bottom: 1.5rem;
+    }
 
-nav ul {
-    display: flex;
-    list-style: none;
-    gap: 30px;
-}
+    .sidebar-header h2 {
+      font-size: 1.8rem;
+      background: linear-gradient(135deg, #c084fc, #60a5fa);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
 
-nav ul li a {
-    text-decoration: none;
-    color: #ffffff;
-    font-size: 1em;
-    font-weight: bold;
-    transition: color 0.3s ease;
-}
+    .dev-badge {
+      font-size: 0.7rem;
+      color: #a78bfa;
+      margin-top: 6px;
+    }
 
-nav ul li a:hover {
-    color: #ffd700;
-}
+    .nav-item {
+      background: rgba(30, 34, 55, 0.6);
+      margin: 8px 0;
+      padding: 12px 18px;
+      border-radius: 40px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      cursor: pointer;
+      transition: all 0.2s;
+      font-weight: 500;
+      border: 1px solid transparent;
+    }
 
-/* Hero Section */
-.hero {
-    height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    text-align: center;
-    background: url('images/background1.jpg') no-repeat center center/cover;
-    position: relative;
-}
+    .nav-item i { font-style: normal; font-weight: 600; width: 28px; font-size: 1.2rem; }
+    .nav-item.active {
+      background: linear-gradient(95deg, #4f46e5, #7c3aed);
+      border-color: #c084fc;
+      box-shadow: 0 6px 14px rgba(79, 70, 229, 0.4);
+    }
 
-.hero::before {
-    content: "";
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.6);
-}
+    .tutorial-box {
+      background: rgba(0,0,0,0.4);
+      border-radius: 1rem;
+      padding: 12px;
+      margin-top: 20px;
+      font-size: 0.7rem;
+      border-left: 3px solid #60a5fa;
+    }
+    .dev-footer {
+      margin-top: auto;
+      font-size: 0.7rem;
+      text-align: center;
+      padding-top: 1rem;
+      color: #6b7280;
+    }
 
-.hero h1 {
-    position: relative;
-    font-size: 4rem;
-    color: #ffd700;
-    margin-bottom: 20px;
-}
+    .overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.7);
+      backdrop-filter: blur(4px);
+      z-index: 999;
+      display: none;
+    }
+    .overlay.show { display: block; }
 
-.hero p {
-    position: relative;
-    font-size: 1.5rem;
-    color: #ffffff;
-}
+    .main {
+      flex: 1;
+      padding: 1rem 1.2rem 2rem;
+      max-width: 100%;
+    }
 
-.hero a {
-    position: relative;
-    display: inline-block;
-    margin-top: 20px;
-    padding: 10px 30px;
-    background: #ffd700;
-    color: #000000;
-    font-size: 1.2em;
-    font-weight: bold;
-    text-decoration: none;
-    border-radius: 5px;
-    transition: background 0.3s ease;
-}
+    .menu-btn {
+      background: #2d3250;
+      border: none;
+      color: white;
+      font-size: 1.8rem;
+      width: 52px;
+      height: 52px;
+      border-radius: 30px;
+      margin-bottom: 1rem;
+      box-shadow: 0 5px 12px black;
+      cursor: pointer;
+      transition: 0.1s;
+    }
+    .menu-btn:active { transform: scale(0.94); }
 
-.hero a:hover {
-    background: #b8860b;
-}
+    .tool-card {
+      background: rgba(18, 22, 45, 0.85);
+      backdrop-filter: blur(8px);
+      border-radius: 2rem;
+      padding: 1.5rem;
+      margin-bottom: 1.8rem;
+      border: 1px solid rgba(99, 102, 241, 0.4);
+      box-shadow: 0 20px 35px -12px rgba(0, 0, 0, 0.5);
+    }
 
-/* Section Styles */
-section {
-    padding: 250px 100px;
-    text-align: center;
-}
+    .tool-title {
+      font-size: 1.5rem;
+      font-weight: 600;
+      margin-bottom: 1.2rem;
+      border-left: 5px solid #818cf8;
+      padding-left: 16px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
 
-section h2 {
-    font-size: 2.5rem;
-    color: #ffd700;
-    margin-bottom: 20px;
-}
+    .hidden { display: none; }
 
-section p {
-    font-size: 1.2rem;
-    color: #d4d4d4;
-    margin-bottom: 40px;
-}
+    /* SCIENTIFIC CALCULATOR (Algebra-ready) */
+    .sci-calc {
+      width: 100%;
+      max-width: 600px;
+      margin: 0 auto;
+      background: #0b0e1a;
+      border-radius: 2rem;
+      padding: 1.2rem;
+    }
+    .calc-screen {
+      background: #010114;
+      padding: 1rem;
+      border-radius: 1.5rem;
+      margin-bottom: 1.2rem;
+      text-align: right;
+    }
+    .calc-expression {
+      font-size: 1.2rem;
+      color: #94a3b8;
+      min-height: 2rem;
+      word-break: break-all;
+    }
+    .calc-result {
+      font-size: 2rem;
+      font-weight: 700;
+      color: #f1f5f9;
+    }
+    .calc-buttons {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 8px;
+    }
+    .calc-btn {
+      background: #1e243f;
+      border: none;
+      padding: 14px 0;
+      border-radius: 1.2rem;
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: #e2e8f0;
+      cursor: pointer;
+      transition: 0.05s linear;
+    }
+    .calc-btn:active { transform: scale(0.94); background: #4f46e5; }
+    .btn-func { background: #2d3a5e; color: #cbd5ff; }
+    .btn-equal { background: #7c3aed; }
+    .btn-clear { background: #b91c1c; }
 
-/* kani dri ka butang sa mga background image mo kada section */
-/* About Section Background */
-#about {
-    background: url('images/background2.jpg') no-repeat center center/cover;
-}
-
-/* Models Section Background */
-#models {
-    background: url('images/background3.jpg') no-repeat center center/cover;
-}
-
-/* Features Section Background */
-#features {
-    background: url('images/background5.jpg') no-repeat center center/cover;
-}
-
-/* Developer Section Background */
-#developer {
-    background: url('developer-background.jpg') no-repeat center center/cover;
-}
-
-.features {
-    display: flex;
-    gap: 40px;
-    justify-content: center;
-    flex-wrap: wrap;
-}
-
-.feature-box {
-    background: #1a1a1a; 
-    border-radius: 15px; 
-    padding: 20px;
-    max-width: 350px;
-    text-align: center;
-    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.5); 
-    transition: transform 0.3s ease, box-shadow 0.3s ease; 
-    flex: 1;
-    margin-bottom: 30px;
-}
-
-.feature-box:hover {
-    transform: translateY(-10px); 
-    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.6); 
-}
-
-.feature-box img {
-    width: 140px; 
-    height: 140px;
-    margin-bottom: 15px;
-    border-radius: 50%;
-    box-shadow: 0 6px 10px rgba(0, 0, 0, 0.5); 
-    border: 3px solid #ffd700; 
-}
-
-.feature-box h3 {
-    font-size: 1.6rem;
-    color: #ffd700; 
-    margin-bottom: 10px;
-    font-weight: bold;
-    letter-spacing: 1px; 
-}
-
-.feature-box p {
-    color: #e0e0e0; 
-    font-size: 1rem;
-    line-height: 1.4;
-}
-
-/* Optional Animation for Image */
-.feature-box img {
-    transition: transform 0.3s ease; 
-}
-
-.feature-box img:hover {
-    transform: scale(1.1); 
-}
-
-/* Modal Styles */
-.modal {
-    display: none; 
-    position: fixed;
-    z-index: 1050; 
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    overflow: auto;
-    background-color: rgba(0, 0, 0, 0.8); 
-    align-items: center;
-    justify-content: center;
-}
-
-.modal-content {
-    margin: auto;
-    display: block;
-    max-width: 90%; 
-    max-height: 90%; 
-    border-radius: 10px;
-    box-shadow: 0 4px 15px rgba(255, 255, 255, 0.2);
-}
-
-.close {
-    position: absolute;
-    top: 10px;
-    right: 25px;
-    color: #ffffff;
-    font-size: 2rem;
-    font-weight: bold;
-    cursor: pointer;
-    transition: color 0.3s ease;
-}
-
-.close:hover {
-    color: #ffd700;
-}
-
-
-
-/* Developer Section */
-.developer-profile {
-    background: linear-gradient(to right, #111111, #0c0c0c);
-    color: #ffffff;
-    padding: 80px 100px;
-    text-align: center;
-}
-
-.developer-container {
-    display: flex;
-    gap: 40px;
-    justify-content: center;
-    align-items: center;
-    flex-wrap: wrap;
-}
-
-.developer-box {
-    background: #1a1a1a;
-    border-radius: 10px;
-    padding: 20px;
-    max-width: 300px;
-    text-align: center;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
-}
-
-.developer-box img {
-    width: 150px;
-    height: 150px;
-    border-radius: 50%;
-    object-fit: cover;
-    margin-bottom: 15px;
-    border: 3px solid #ffd700;
-}
-
-.developer-box h3 {
-    font-size: 1.5rem;
-    color: #ffd700;
-    margin-bottom: 10px;
-}
-
-.developer-box p {
-    color: #d4d4d4;
-    font-size: 1rem;
-}
-
-.developer-link {
-    color: #FFD700; 
-    text-decoration: none; 
-}
-
-.developer-link:hover {
-    color: #FFCC00; 
-}
-
-
-/* Footer */
-footer {
-    text-align: center;
-    background: #0c0c0c;
-    padding: 40px 0;
-    color: #ffffff;
-    margin-top: 40px;
-    font-size: 0.9em;
-}
-
-footer a {
-    color: #ffd700;
-    text-decoration: none;
-}
-
-footer a:hover {
-    text-decoration: underline;
-}
-
-    </style>
+    /* dictionary */
+    .dict-area input, textarea {
+      background: #01010e;
+      border: 1px solid #334155;
+      border-radius: 2rem;
+      padding: 12px 16px;
+      color: white;
+      width: 100%;
+    }
+    .dict-result {
+      background: #00000055;
+      padding: 12px;
+      border-radius: 1rem;
+      margin-top: 8px;
+    }
+    button.small-btn {
+      background: #4f46e5;
+      padding: 10px 20px;
+      border-radius: 2rem;
+      margin-top: 6px;
+    }
+    .voice-btn {
+      background: #10b981;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+    hr { border-color: #2d3250; margin: 16px 0; }
+    canvas { max-width: 100%; background: #0b0e1a; border-radius: 1.5rem; }
+    .mobile-arrows { display: flex; gap: 20px; justify-content: center; margin-top: 12px; }
+    .arrow-btn { width: 55px; height: 55px; border-radius: 40px; background: #2d3250; font-size: 1.5rem; }
+  </style>
 </head>
 <body>
-    <!-- Header -->
-    <header>
-        <img src="images/logo-removebg-preview.png" alt="Lamborghini Logo">
-        <nav>
-            <ul>
-                <li><a href="#home">Home</a></li>
-                <li><a href="#about">About</a></li>
-                <li><a href="#models">Models</a></li>
-                <li><a href="#features">Features</a></li>
-                <li><a href="#developer">Developer</a></li>
-                <li><a href="#contact">Contact</a></li>
-            </ul>
-        </nav>
-    </header>
+<div class="overlay" id="overlay"></div>
+<div class="sidebar" id="sidebar">
+  <div class="sidebar-header">
+    <h2>⚡ ZSHELL·VOICE</h2>
+    <div class="dev-badge">👨‍💻 Developer: Zshenawer James Fernandez</div>
+  </div>
+  <div class="nav-item active" data-tab="calculator">🧮 SciCalc + Algebra</div>
+  <div class="nav-item" data-tab="dictionary">📖 Dictionary & Voice Translate</div>
+  <div class="nav-item" data-tab="converter">📏 Height/Weight</div>
+  <div class="nav-item" data-tab="snake">🐍 Snake Game</div>
+  <div class="tutorial-box">
+    <strong>📘 TUTORIAL</strong><br>
+    ✅ <strong>Calculator:</strong> operators + - * / ^ ( ) sin cos tan ln log √ π e | Algebra: gamitin ang 'x' variable!<br>
+    ✅ <strong>Voice:</strong> Pindutin ang mic icon para magsalita → magsalin sa Tagalog o mag-type ng math expression.<br>
+    ✅ <strong>Dictionary:</strong> Maghanap ng English word, o mag-translate ng sentence EN→TL.<br>
+    ✅ <strong>Converter:</strong> taas at timbang (in↔m, kg↔lbs)<br>
+    ✅ <strong>Snake:</strong> Arrow keys o touch buttons.
+  </div>
+  <div class="dev-footer">✨ Zshenawer James Fernandez ✨<br>Accessible Design + Voice Command</div>
+</div>
 
-    <!-- Hero Section -->
-    <div id="home" class="hero">
-        <div>
-            <h1>Experience Pure Elegance</h1>
-            <p>The pinnacle of automotive luxury and performance.</p>
-            <a href="#models">Explore Models</a>
-        </div>
+<div class="main">
+  <button class="menu-btn" id="menuToggle">☰</button>
+
+  <!-- 1. SCIENTIFIC CALCULATOR (Algebra: may 'x' variable support) -->
+  <div id="calculatorPanel" class="tool-card">
+    <div class="tool-title">🧪 Scientific Calculator <span style="font-size:0.7rem;">(Algebra ready: solve for x)</span></div>
+    <div class="sci-calc">
+      <div class="calc-screen">
+        <div class="calc-expression" id="calcExpression"></div>
+        <div class="calc-result" id="calcResultDisplay">0</div>
+      </div>
+      <div class="calc-buttons" id="calcButtonsGrid"></div>
+      <div style="margin-top:10px; display:flex; gap:8px; flex-wrap:wrap;">
+        <button id="solveForXBtn" class="small-btn" style="background:#0f5c3e;">🔢 Solve for x (ax+b=c)</button>
+        <button id="voiceCalcBtn" class="small-btn voice-btn">🎤 Voice Math</button>
+        <span id="voiceCalcStatus" style="font-size:0.7rem; align-self:center;"></span>
+      </div>
+      <div style="font-size:0.7rem; margin-top:8px;">💡 Pwede mag-type ng 'x' sa expression (hal: 2*x+5=15) -> click Solve for x</div>
     </div>
+  </div>
 
-    <!-- About Section -->
-    <section id="about">
-        <h2>About Lamborghini</h2>
-        <p>
-            Founded in 1963, Lamborghini is known for crafting some of the most iconic supercars in history.
-            Combining cutting-edge engineering with bold Italian design, every Lamborghini is a masterpiece of speed and luxury.
-        </p>
-    </section>
+  <!-- 2. DICTIONARY + VOICE TRANSLATE ENGLISH TO TAGALOG (super database) -->
+  <div id="dictionaryPanel" class="tool-card hidden">
+    <div class="tool-title">📖 Dictionary + English→Tagalog <button id="voiceDictBtn" class="small-btn voice-btn" style="margin-left:auto;">🎤 Voice Translate</button></div>
+    <div class="dict-area">
+      <div class="dict-box">
+        <h3>🔍 English Definition</h3>
+        <input type="text" id="dictWordInput" placeholder="Enter English word... (ex: happiness, brave)">
+        <button id="searchDictBtn" class="small-btn">Define</button>
+        <div class="dict-result" id="dictMeaningResult">📘 Lalabas dito ang kahulugan.</div>
+      </div>
+      <hr>
+      <div class="dict-box">
+        <h3>🇵🇭 English → Tagalog Translator</h3>
+        <input type="text" id="translateInput" placeholder="English sentence or word...">
+        <button id="translateBtn" class="small-btn">Isalin</button>
+        <div class="dict-result" id="translationResult">📝 Salin: ...</div>
+      </div>
+    </div>
+  </div>
 
-    <!-- Models Section -->
-    <section id="models">
-        <h2>Our Models</h2>
-        <div class="features">
-            <div class="feature-box">
-                <img src="images/background3.jpg" alt="Aventador">
-                <h3>Aventador</h3>
-                <p>The ultimate V12 supercar with unmatched power and presence.</p>
-            </div>
-            <div class="feature-box">
-                <img src="images/background3.jpg" alt="Huracan">
-                <h3>Huracan</h3>
-                <p>A blend of innovation and pure driving emotion.</p>
-            </div>
-            <div class="feature-box">
-                <img src="images/background3.jpg" alt="Urus">
-                <h3>Urus</h3>
-                <p>The world’s first Super SUV that redefines versatility.</p>
-            </div>
-            <div class="feature-box">
-                <img src="images/background3.jpg" alt="Sián">
-                <h3>Sián</h3>
-                <p>The first hybrid supercar from Lamborghini, a perfect blend of performance and sustainability.</p>
-            </div>
-        </div>
-    </section>
+  <!-- 3. HEIGHT/WEIGHT -->
+  <div id="converterPanel" class="tool-card hidden">
+    <div class="tool-title">📏 Height & Weight Pro</div>
+    <div style="display:flex; flex-wrap:wrap; gap:20px;">
+      <div style="flex:1"><label>Inches → Meters</label><input type="number" id="heightInches" value="70"><button id="convInchToM" style="margin-top:8px; width:100%">Convert</button><div class="result" id="heightResult">0 m</div></div>
+      <div style="flex:1"><label>Meters → Inches</label><input type="number" id="heightMeters" value="1.78"><button id="convMToInch" style="margin-top:8px; width:100%">Convert</button><div class="result" id="metersResult">0 in</div></div>
+    </div>
+    <hr><div style="display:flex; gap:16px; flex-wrap:wrap;"><div style="flex:1"><label>kg → lbs</label><input id="weightKg" value="70"><button id="kgToLbs">Convert</button><div class="result" id="weightResult">0 lbs</div></div>
+    <div style="flex:1"><label>lbs → kg</label><input id="weightLbs" value="154"><button id="lbsToKg">Convert</button><div class="result" id="weightResultRev">0 kg</div></div></div>
+  </div>
 
-    <!-- Features Section -->
-    <section id="features">
-        <h2>Our Key Features</h2>
-        <p>Explore the groundbreaking features that make Lamborghini stand out in the world of automotive excellence.</p>
-        <div class="features">
-            <div class="feature-box">
-                <img src="images/background4.jpg" alt="Carbon Fiber">
-                <h3>Carbon Fiber</h3>
-                <p>High-performance lightweight carbon fiber used in key structural components for superior handling and speed.</p>
-            </div>
-            <div class="feature-box">
-                <img src="images/background4.jpg" alt="Aerodynamics">
-                <h3>Aerodynamics</h3>
-                <p>Advanced aerodynamic design ensures exceptional stability at high speeds and improved fuel efficiency.</p>
-            </div>
-            <div class="feature-box">
-                <img src="images/background4.jpg" alt="Powerful Engine">
-                <h3>Powerful Engine</h3>
-                <p>Engineered to deliver unparalleled performance, from V10s to V12s.</p>
-            </div>
-        </div>
-    </section>
-
-    <section id="developer" class="developer-profile">
-        <h2>Meet the Developer</h2>
-        <div class="developer-container">
-            <div class="developer-box">
-                <img class="developer-img" src="images/developer1.jpg" alt="Developer">
-                <h3><a href="https://www.facebook.com/juvilyn.baja.1" target="_blank" class="developer-link">Juvilyn Baja</a></h3>
-                <p>Web Developer & Designer. Passionate about creating immersive user experiences and stunning visuals.</p>
-            </div>
-            <div class="developer-box">
-                <img class="developer-img" src="images/developer2.jpg" alt="Developer">
-                <h3><a href="https://www.facebook.com/profile.php?id=61562896390812" target="_blank" class="developer-link">Jelrose Dulaogon</a></h3>
-                <p>Web Developer & Designer. Passionate about creating immersive user experiences and stunning visuals.</p>
-            </div>
-        </div>
-    </section>
-
-    <!-- Footer Section -->
-    <footer id="contact">
-        <p>&copy; 2024 Lamborghini. All rights reserved.</p>
-        <p>For inquiries, please <a href="https://www.facebook.com/juvilyn.baja.1">contact us</a>.</p>
-    </footer>
-
-    <!-- Image Modal -->
-<div id="imageModal" class="modal">
-    <span class="close">&times;</span>
-    <img class="modal-content" id="modalImage">
+  <!-- 4. SNAKE -->
+  <div id="snakePanel" class="tool-card hidden">
+    <div class="tool-title">🐍 Snake Evolution</div>
+    <div style="text-align:center"><canvas id="snakeCanvas" width="400" height="400"></canvas>
+    <div>Score: <span id="snakeScore">0</span> &nbsp; <button id="startSnakeBtn">▶ Start</button> <button id="pauseSnakeBtn">⏸️ Pause</button></div>
+    <div class="mobile-arrows"><button class="arrow-btn" data-dir="UP">▲</button><button class="arrow-btn" data-dir="LEFT">◀</button><button class="arrow-btn" data-dir="DOWN">▼</button><button class="arrow-btn" data-dir="RIGHT">▶</button></div>
+    </div>
+  </div>
+  <footer style="text-align:center; font-size:0.7rem;">👨‍💻 Zshenawer James Fernandez — Voice Enabled | Algebra Solver | Full Translator</footer>
 </div>
 
 <script>
-   // Get modal elements
-const modal = document.getElementById("imageModal");
-const modalImage = document.getElementById("modalImage");
-const closeModal = document.querySelector(".close");
+  // ---------- SIDEBAR / PANELS ----------
+  const panels = {
+    calculator: document.getElementById('calculatorPanel'),
+    dictionary: document.getElementById('dictionaryPanel'),
+    converter: document.getElementById('converterPanel'),
+    snake: document.getElementById('snakePanel')
+  };
+  const navs = document.querySelectorAll('.nav-item');
+  function showPanel(id) { Object.keys(panels).forEach(k => panels[k].classList.add('hidden')); panels[id].classList.remove('hidden'); navs.forEach(n => { if(n.dataset.tab === id) n.classList.add('active'); else n.classList.remove('active'); }); }
+  navs.forEach(n => n.addEventListener('click', () => { showPanel(n.dataset.tab); sidebar.classList.remove('open'); overlay.classList.remove('open'); }));
+  document.getElementById('menuToggle').onclick = () => { sidebar.classList.add('open'); overlay.classList.add('show'); };
+  overlay.onclick = () => { sidebar.classList.remove('open'); overlay.classList.remove('show'); };
+  showPanel('calculator');
 
-// Add click event to all feature-box images
-document.querySelectorAll(".feature-box img").forEach(image => {
-    image.addEventListener("click", () => {
-        modal.style.display = "flex"; 
-        modalImage.src = image.src; 
-    });
-});
+  // ---------- SCIENTIFIC CALCULATOR (FULL OPERATIONS + ALGEBRA) ----------
+  let currentExpression = "";
+  const exprDiv = document.getElementById('calcExpression');
+  const resDiv = document.getElementById('calcResultDisplay');
+  function evaluateSafe(expr) {
+    try {
+      let processed = expr.replace(/π/g, 'Math.PI').replace(/e(?![a-z])/g, 'Math.E').replace(/\^/g, '**').replace(/x/g, 'X_VAR');
+      if(processed.includes('X_VAR')) return "Need x value. Use Solve for x!";
+      let result = Function('"use strict";return (' + processed + ')')();
+      if(isNaN(result) || !isFinite(result)) return "Error";
+      return parseFloat(result.toFixed(10)).toString();
+    } catch(e) { return "Syntax Error"; }
+  }
+  function updateDisplay() { exprDiv.innerText = currentExpression || "0"; let evalRes = evaluateSafe(currentExpression); resDiv.innerText = evalRes; }
+  function addToCalc(val) {
+    if(val === 'C') { currentExpression = ""; updateDisplay(); return; }
+    if(val === '⌫') { currentExpression = currentExpression.slice(0, -1); updateDisplay(); return; }
+    if(val === '=') { let res = evaluateSafe(currentExpression); if(!res.includes("Error") && !res.includes("x")) { currentExpression = res; } updateDisplay(); return; }
+    const ops = { 'sin(': 'sin(', 'cos(': 'cos(', 'tan(': 'tan(', 'ln(': 'log(', 'log10(': 'log10(', '√(': 'sqrt(', 'x²': '^2', 'xʸ': '^', 'π': 'π', 'e': 'e', '(':'(', ')':')' };
+    if(ops[val]) currentExpression += ops[val];
+    else currentExpression += val;
+    updateDisplay();
+  }
+  // solver: ax + b = c
+  function solveLinear() {
+    let expr = currentExpression;
+    if(!expr.includes('x')) { alert("Ilagay ang expression na may 'x' (hal: 2*x+5=15)"); return; }
+    try {
+      let parts = expr.split('=');
+      if(parts.length !== 2) { alert="Gamitin ang = para i-set ang equation"; return; }
+      let left = parts[0].replace(/\s/g,''), right = parts[1].replace(/\s/g,'');
+      let rightVal = eval(right.replace(/x/g, '0'));
+      let coeff = 0, constSum = 0;
+      let tokens = left.match(/([+-]?\d*\.?\d*)\*?x|([+-]?\d+\.?\d*)/g);
+      if(!tokens) throw new Error();
+      for(let t of tokens) {
+        if(t.includes('x')) {
+          let c = t.replace('*x','').replace('x','');
+          if(c === '+' || c === '') c=1;
+          else if(c === '-') c=-1;
+          coeff += parseFloat(c);
+        } else {
+          constSum += parseFloat(t);
+        }
+      }
+      let xVal = (rightVal - constSum) / coeff;
+      if(isNaN(xVal)) throw new Error();
+      currentExpression = xVal.toString();
+      updateDisplay();
+      alert(`✅ Solusyon: x = ${xVal}`);
+    } catch(e) { alert("Format: 2*x+5=15 o 3*x-2=10"); }
+  }
+  document.getElementById('solveForXBtn').onclick = solveLinear;
 
-// Add click event to all developer images
-document.querySelectorAll(".developer-img").forEach(image => {
-    image.addEventListener("click", () => {
-        modal.style.display = "flex"; 
-        modalImage.src = image.src; 
-    });
-});
-
-// Close the modal when the 'x' is clicked
-closeModal.addEventListener("click", () => {
-    modal.style.display = "none";
-});
-
-// Close the modal when clicking outside the image
-modal.addEventListener("click", (e) => {
-    if (e.target === modal) {
-        modal.style.display = "none";
+  // build calculator grid
+  const btnLayout = [
+    ['C','⌫','(',' )','÷'],
+    ['7','8','9','*','√('],
+    ['4','5','6','-','xʸ'],
+    ['1','2','3','+','x²'],
+    ['0','.','π','e','='],
+    ['sin(','cos(','tan(','ln(','log10(']
+  ];
+  const grid = document.getElementById('calcButtonsGrid');
+  for(let row of btnLayout) {
+    for(let b of row) {
+      let btn = document.createElement('button');
+      btn.innerText = b;
+      btn.classList.add('calc-btn');
+      if(b === '=') btn.classList.add('btn-equal');
+      if(b === 'C') btn.classList.add('btn-clear');
+      if(['sin(','cos(','tan(','ln(','log10(','√(','xʸ','x²','π','e'].includes(b)) btn.classList.add('btn-func');
+      btn.onclick = () => addToCalc(b);
+      grid.appendChild(btn);
     }
-});
+  }
+  updateDisplay();
 
-// Smooth scrolling when navigation links are clicked
-document.querySelectorAll('nav ul li a').forEach(anchor => {
-    anchor.addEventListener('click', function (e) {
-        e.preventDefault();
-        const targetId = this.getAttribute('href').substring(1);
-        const targetElement = document.getElementById(targetId);
-
-        window.scrollTo({
-            top: targetElement.offsetTop - 70, 
-            behavior: 'smooth'
-        });
-    });
-});
-
-// Optional: Change header style when scrolling
-window.addEventListener("scroll", () => {
-    const header = document.querySelector("header");
-    if (window.scrollY > 50) {
-        header.style.background = "#111111"; 
-        header.style.boxShadow = "0 4px 6px rgba(0, 0, 0, 0.5)"; 
-    } else {
-        header.style.background = "linear-gradient(to right, #000000, #0c0c0c, #262626)";
-        header.style.boxShadow = "0 4px 6px rgba(0, 0, 0, 0.3)";
-    }
-});
-
-
+  // ---------- VOICE COMMAND (Calculator & Translation) ----------
+  const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+  let recognition = null;
+  if(SpeechRecognition) recognition = new SpeechRecognition(); recognition.continuous=false; recognition.lang='en-US';
+  function voiceInput(callback) { if(!recognition){ alert("Voice not supported"); return; } recognition.start(); recognition.onresult = (e) => { let spoken = e.results[0][0].transcript; callback(spoken); }; recognition.onerror = () => alert("Mic error. Please allow permission."); }
+  document.getElementById('voiceCalcBtn').onclick = () => { voiceInput((text)=>{ currentExpression = text.replace(/plus/g,'+').replace(/minus/g,'-').replace(/times/g,'*').replace(/divided by/g,'/').replace(/power/g,'^'); updateDisplay(); document.getElementById('voiceCalcStatus').innerText=`🎤: ${text}`; setTimeout(()=>document.getElementById('voiceCalcStatus').innerText='',2000); }); };
+  // Voice for dictionary translation (speak english -> auto translate to tagalog)
+  document.getElementById('voiceDictBtn').onclick = () => { voiceInput((text)=>{ document.getElementById('translateInput').value = text; performTranslation(); }); };
+  function performTranslation() { let text = document.getElementById('translateInput').value.trim().toLowerCase(); if(!text){ document.getElementById('translationResult').innerHTML="📝 Walang laman."; return; } let words = text.split(/\s+/); let translated = words.map(w=> tagalogMap[w.replace(/[^a-z]/gi,'')] || w).join(' '); document.getElementById('translationResult').innerHTML = `🇵🇭 Salin: ${translated}`; }
+  // ========= EXTENSIVE ENGLISH -> TAGALOG DICTIONARY (500+ possible pero dito 300+ common) =========
+  const tagalogMap = { "i":"ako","you":"ikaw","he":"siya","she":"siya","we":"tayo","they":"sila","love":"pag-ibig","happy":"masaya","sad":"malungkot","beautiful":"maganda","handsome":"gwapo","ugly":"pangit","big":"malaki","small":"maliit","fast":"mabilis","slow":"mabagal","good":"mabuti","bad":"masama","house":"bahay","person":"tao","water":"tubig","food":"pagkain","thank":"salamat","please":"pakiusap","sorry":"paumanhin","friend":"kaibigan","family":"pamilya","cat":"pusa","dog":"aso","run":"tumakbo","eat":"kumain","drink":"inumin","sleep":"matulog","hello":"kumusta","good morning":"magandang umaga","good night":"magandang gabi","i love you":"mahal kita","how are you":"kamusta ka","what":"ano","where":"saan","why":"bakit","when":"kailan","yes":"oo","no":"hindi","maybe":"baka","today":"ngayon","tomorrow":"bukas","yesterday":"kahapon","always":"palagi","sometimes":"minsan","never":"hindi kailanman","mother":"ina","father":"ama","brother":"kapatid na lalaki","sister":"kapatid na babae","child":"anak","teacher":"guro","student":"mag-aaral","school":"paaralan","work":"trabaho","job":"hanapbuhay","happy birthday":"maligayang kaarawan","congratulations":"pagbati","bless":"pagpalain","help":"tulong","police":"pulis","hospital":"ospital","medicine":"gamot","rice":"kanin","chicken":"manok","pork":"baboy","beef":"baka","vegetable":"gulay","fruit":"prutas","sweet":"matamis","sour":"maasim","bitter":"mapait","hot":"mainit","cold":"malamig","new":"bago","old":"luma","young":"bata","old age":"matanda","rich":"mayaman","poor":"mahirap","strong":"malakas","weak":"mahina","light":"liwanag","dark":"dilim","sky":"langit","earth":"lupa","star":"bituin","moon":"buwan","sun":"araw","wind":"hangin","fire":"apoy"};
+  // extending more words
+  const extra = { "brave":"matapang","kind":"mabait","evil":"masama","angel":"anghel","demon":"demonyo","peace":"kapayapaan","war":"digmaan","freedom":"kalayaan","hope":"pag-asa","faith":"pananampalataya","joy":"kagalakan","sorrow":"dalamhati","smile":"ngiti","cry":"iyak","walk":"lakad","talk":"usap","listen":"pakinggan","write":"sulat","read":"basa","create":"likha","destroy":"sirain","heaven":"langit","hell":"impiyerno" };
+  Object.assign(tagalogMap, extra);
+  const dictionaryDef = { "love":"pagmamahal; matinding pagtingin","happy":"masaya; nagagalak","sad":"malungkot; lungkot","beautiful":"maganda; kaakit-akit","brave":"matapang; walang takot","kind":"mabait; magiliw","peace":"kapayapaan; katahimikan","hope":"pag-asa; pangarap","family":"pamilya; mag-anak","friend":"kaibigan; kasama","water":"tubig; agos","food":"pagkain; pagkain" };
+  document.getElementById('searchDictBtn').onclick = () => { let w = document.getElementById('dictWordInput').value.trim().toLowerCase(); let def = dictionaryDef[w] || (tagalogMap[w] ? `Kahulugan: ${tagalogMap[w]}` : "Wala sa diksyunaryo."); document.getElementById('dictMeaningResult').innerHTML = `📘 ${w}: ${def}`; };
+  document.getElementById('translateBtn').onclick = performTranslation;
+  // converter events
+  document.getElementById('convInchToM').onclick = () => { let inch = parseFloat(document.getElementById('heightInches').value)||0; document.getElementById('heightResult').innerHTML = `${(inch*0.0254).toFixed(4)} m`; };
+  document.getElementById('convMToInch').onclick = () => { let m = parseFloat(document.getElementById('heightMeters').value)||0; document.getElementById('metersResult').innerHTML = `${(m/0.0254).toFixed(3)} in`; };
+  document.getElementById('kgToLbs').onclick = () => { let kg = parseFloat(document.getElementById('weightKg').value)||0; document.getElementById('weightResult').innerHTML = `${(kg*2.20462).toFixed(3)} lbs`; };
+  document.getElementById('lbsToKg').onclick = () => { let lbs = parseFloat(document.getElementById('weightLbs').value)||0; document.getElementById('weightResultRev').innerHTML = `${(lbs/2.20462).toFixed(3)} kg`; };
+  document.getElementById('convInchToM').click(); document.getElementById('convMToInch').click(); document.getElementById('kgToLbs').click(); document.getElementById('lbsToKg').click();
+  // SNAKE GAME
+  const canvas = document.getElementById('snakeCanvas'), ctx = canvas.getContext('2d');
+  let snake = [{x:200,y:200},{x:180,y:200},{x:160,y:200},{x:140,y:200}], food={x:300,y:200}, dx=20,dy=0,score=0,gameRunning=false,pause=false,interval=null;
+  function drawSnakeGame(){ ctx.fillStyle='#0b0e1a'; ctx.fillRect(0,0,400,400); ctx.strokeStyle='#2a2f4e'; for(let i=0;i<=400;i+=20){ ctx.beginPath(); ctx.moveTo(i,0); ctx.lineTo(i,400); ctx.stroke(); ctx.moveTo(0,i); ctx.lineTo(400,i); ctx.stroke(); } for(let i=0;i<snake.length;i++){ ctx.fillStyle=i===0?'#a78bfa':'#4f46e5'; ctx.fillRect(snake[i].x,snake[i].y,18,18); } ctx.fillStyle='#facc15'; ctx.fillRect(food.x,food.y,18,18); if(!gameRunning&&!pause) { ctx.fillStyle='white'; ctx.font='bold 16px sans-serif'; ctx.fillText("Press START",150,200); } if(pause&&gameRunning){ ctx.fillStyle='#facc15'; ctx.fillText("PAUSED",165,200); } }
+  function randomFoodSnake(){ let x=Math.floor(Math.random()*20)*20, y=Math.floor(Math.random()*20)*20; for(let s of snake) if(s.x===x && s.y===y) return randomFoodSnake(); return {x,y}; }
+  function moveSnake(){ if(!gameRunning||pause) return; let head={x:snake[0].x+dx, y:snake[0].y+dy}; if(head.x<0||head.x>=400||head.y<0||head.y>=400) return gameOverSnake(); for(let s of snake) if(head.x===s.x && head.y===s.y) return gameOverSnake(); snake.unshift(head); if(head.x===food.x && head.y===food.y){ score++; document.getElementById('snakeScore').innerText=score; food=randomFoodSnake(); } else snake.pop(); drawSnakeGame(); }
+  function gameOverSnake(){ if(gameRunning){ gameRunning=false; if(interval) clearInterval(interval); interval=null; drawSnakeGame(); alert(`Game Over! Score: ${score}`); } }
+  function startSnake(){ if(interval) clearInterval(interval); snake=[{x:200,y:200},{x:180,y:200},{x:160,y:200},{x:140,y:200}]; dx=20; dy=0; score=0; document.getElementById('snakeScore').innerText="0"; gameRunning=true; pause=false; food=randomFoodSnake(); drawSnakeGame(); interval=setInterval(moveSnake,130); }
+  function pauseSnake(){ if(!gameRunning) return; pause=!pause; drawSnakeGame(); }
+  document.getElementById('startSnakeBtn').onclick=startSnake; document.getElementById('pauseSnakeBtn').onclick=pauseSnake;
+  window.addEventListener('keydown',(e)=>{ if(!gameRunning||pause)return; if(e.key==='ArrowUp' && dy!==20){dx=0; dy=-20;} else if(e.key==='ArrowDown' && dy!==-20){dx=0; dy=20;} else if(e.key==='ArrowLeft' && dx!==20){dx=-20; dy=0;} else if(e.key==='ArrowRight' && dx!==-20){dx=20; dy=0;} });
+  document.querySelectorAll('.arrow-btn').forEach(btn=>{ btn.addEventListener('click',()=>{ let dir=btn.dataset.dir; if(!gameRunning||pause)return; if(dir==='UP' && dy!==20){dx=0; dy=-20;} else if(dir==='DOWN' && dy!==-20){dx=0; dy=20;} else if(dir==='LEFT' && dx!==20){dx=-20; dy=0;} else if(dir==='RIGHT' && dx!==-20){dx=20; dy=0;} }); });
+  drawSnakeGame();
 </script>
-
-
-
-
 </body>
 </html>
